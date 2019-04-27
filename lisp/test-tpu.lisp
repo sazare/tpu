@@ -48,49 +48,25 @@
 )
 
 (deftest test-deletev () "for deletev"
-; (test "deletev varnull" '(p x1 p y1) (deletev '(p x1) '(p y1) '()))
-
-)
-(deftest test-uresolve () "for uresolve"
-
-)
-
-(deftest test-gunit () "for gunit"
-
+ (test "deletev nnv" '() (deletev '() '() '(x y)))
+ (test "deletev vnv" '(x) (deletev '(x) '() '(x y)))
+ (test "deletev nvv" '(y) (deletev '() '(y) '(x y)))
+ (test "deletev vvv2 ?" '(x x) (deletev '(x) '(x) '(x y)))
+ (test "deletev vwv" '(x y) (deletev '(x) '(y) '(x y)))
+ (test "deletev vwvwvw ?" '(x y y x) (deletev '(x y) '(y x) '(x y)))
+ (test "deletev v2v2v3 ?" '(x y x z) (deletev '(x y) '(x z) '(x y z)))
 )
 
-(deftest test-pnsort () "for pnsort"
-
-)
-
-(deftest test-fdepth () "for fdepth"
-
-)
-
-(deftest test-ftest () "for ftest"
-
-)
-
-(deftest test-subsume () "for subsume"
-
-)
-
-(deftest test-stest () "for stest"
-
-)
-
-(deftest test-contradict () "for contradict"
-
-)
-
-(deftest test-dtree () "for dtree"
-
-)
-
-(deftest test-tpu () "for tpu"
-
-)
-
+(deftest test-uresolve () "for uresolve" ) 
+(deftest test-gunit () "for gunit" ) 
+(deftest test-pnsort () "for pnsort" )
+(deftest test-fdepth () "for fdepth" )
+(deftest test-ftest () "for ftest" )
+(deftest test-subsume () "for subsume" )
+(deftest test-stest () "for stest" )
+(deftest test-contradict () "for contradict" )
+(deftest test-dtree () "for dtree" )
+(deftest test-tpu () "for tpu" )
 
 (deftest test-all ()
  (test-set "tests for tpu"
@@ -109,7 +85,6 @@
   (test-contradict)
   (test-dtree)
   (test-tpu)
-
  )
 )
 

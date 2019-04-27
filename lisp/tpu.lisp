@@ -68,11 +68,23 @@
  )
 )
 
-;(defun deletev (x y var)
-; (prog (var1 tx tx1 x1)
-;  (setf x (append x y))
-; )
-;) 
+(defun deletev (x y var)
+;(format t "deletev:~a,~a,~a~%" x y var)
+ (let (var1 tx tx1 x1)
+  (setf x (append x y))
+  (loop for vard on var do
+    (setf var1 (car vard))
+    (setf tx x)
+    (setf x1 nil)
+    (loop for dtx on tx do
+      (setf tx1 (car dtx))
+      (when (eq tx1 var1) (setf x (append x1 dtx))(return))
+      (setf x1 (cons tx1 x1))
+    )
+  finally (return x)
+  )
+ )
+) 
 
 
 
