@@ -49,17 +49,38 @@
 
 (deftest test-deletev () "for deletev"
  (test "deletev nnv" '() (deletev '() '() '(x y)))
- (test "deletev vnv" '(x) (deletev '(x) '() '(x y)))
- (test "deletev nvv" '(y) (deletev '() '(y) '(x y)))
- (test "deletev vvv2 ?" '(x x) (deletev '(x) '(x) '(x y)))
- (test "deletev vwv" '(x y) (deletev '(x) '(y) '(x y)))
- (test "deletev vwvwvw ?" '(x y y x) (deletev '(x y) '(y x) '(x y)))
- (test "deletev v2v2v3 ?" '(x y x z) (deletev '(x y) '(x z) '(x y z)))
+ (test "deletev vnv" '() (deletev '(x) '() '(x y)))
+ (test "deletev nvv" '() (deletev '() '(y) '(x y)))
+ (test "deletev vwv" '() (deletev '(x) '(y) '(x y)))
+ (test "deletev vvv2" '(z) (deletev '(x) '(y z) '(x y)))
+ (test "deletev vwvwvw" '(x z) (deletev '(x y z) '(w u) '(y w u)))
+ (test "deletev vwvwvw" '(y) (deletev '(x y) '(w z) '(x w z)))
+ (test "deletev v2v2v3" '(n w u) (deletev '(x y w) '(n z u) '(x y z)))
 )
 
-(deftest test-uresolve () "for uresolve" ) 
-(deftest test-gunit () "for gunit" ) 
-(deftest test-pnsort () "for pnsort" )
+(deftest test-uresolve () "for uresolve" 
+ (test "ureso unmatch(??)" '(NIL NIL 3) (uresolve '(1 () ((P a))) '(2 () ((not P b))) 3))
+ (test "ureso contradictvc" '(contradiction 1 2) (uresolve '(1 (x) ((P x))) '(2 () ((not P b))) 3))
+ (test "ureso contradictcv" '(contradiction 1 2) (uresolve '(1 () ((P a))) '(2 (y) ((not P y))) 3))
+ (test "ureso contradictnp" '(contradiction 1 2) (uresolve '(1 () ((not P a))) '(2 (y) ((P y))) 3))
+ (test "ureso fail" '(NIL NIL 3) (uresolve '(1 () ((P a))) '(2 (y) ((not P (f y)))) 3))
+ (test "ureso contradictvf" '(contradiction 1 2) (uresolve '(1 (x) ((P x))) '(2 (y) ((not P (f y)))) 3))
+
+ (test  "book a1 ex1" '(((11 ()((p a)(p b)(q b)))(12 ()((p a)(q a)(p b)))) ((11 1 5 2)(12 1 5 4)) 12) (uresolve '(1 (x) ((not q x))) '(5 () ((p a)(q a)(p b)(q b))) 10))
+
+) 
+
+(deftest test-gunit () "for gunit" 
+ (test "gunit..." '(NIL NIL 10) (gunit '((1 () ((P a)))) '((2 () ((not P a)))) '() '((3 (x) ((P x)(Q x)))(4 (x) ((not P x)(Q x)))) 10))
+ (test "gunit..." '(NIL NIL 10) (gunit '((1 () ((P a)))) '((2 () ((not P a)))) '((3 (x) ((P x)))) '(4 (x) ((P x)(Q x))) 10))
+(format t "I can't understand gunit~%")
+) 
+
+(deftest test-pnsort () "for pnsort" 
+ (test "pnsort1" '(((1()((P a)))(3()((Q c))))((2()((not P b)))(4()((not R d))))) (pnsort '((1()((P a))) (2()((not P b)))(3()((Q c)))(4()((not R d))))))
+ (test "pnsort2" '(((1()((P a)))(3()((Q c))))((2()((not P b)))(4()((not R d))))) (pnsort '((2()((not P b))) (1()((P a))) (4()((not R d))) (3()((Q c))))))
+)
+
 (deftest test-fdepth () "for fdepth" )
 (deftest test-ftest () "for ftest" )
 (deftest test-subsume () "for subsume" )
@@ -76,7 +97,7 @@
   (test-unification)
   (test-deletev)
   (test-uresolve)
-  (test-gunit)
+;  (test-gunit)
   (test-pnsort)
   (test-fdepth)
   (test-ftest)

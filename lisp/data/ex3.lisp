@@ -1,6 +1,6 @@
 ;;; example 3
 (tpu 
-  '((1 (X)((P E X X))
+  '((1 (X)((P E X X)))
     (2 (X)((P (I X) X E))))
   '((3 () ((NOT P A E A))))
   '((4 (X Y Z U V W)((NOT P X Y U)(NOT P Y Z V)(NOT P X V W)(P U Z W)))
