@@ -43,7 +43,7 @@
 
  (test "unify twisted" '((x1 a)(y1 (h a))(y2 (g a))(x2 (k (h a)(g a)))) (unification '(P x1 (h x1) (g x1) x2) '(P a y1 y2 (k y1 y2))))
 
-;; (test "unify wierd" '((x1 a)(x2 (h (g a) (k a)))(y2 (g a))(y3 (k a))) (unification '(P x1 x2 (g x1) (k x1)) '(P a (h y2 y3) y2 y3)))
+ (test "unify wierd" '((x1 a)(x2 (h (g a) (k a)))(y2 (g a))(y3 (k a))) (unification '(P x1 x2 (g x1) (k x1)) '(P a (h y2 y3) y2 y3)))
  (test "unify wierd" '((x1 a)(x2 (h y2 y3))(y2 (g a))(y3 (k a))) (unification '(P x1 x2 (g x1)(k x1)) '(P a (h y2 y3) y2 y3)))
 )
 
@@ -73,7 +73,22 @@
 (deftest test-gunit () "for gunit" 
  (test "gunit..." '(NIL NIL 10) (gunit '((1 () ((P a)))) '((2 () ((not P a)))) '() '((3 (x) ((P x)(Q x)))(4 (x) ((not P x)(Q x)))) 10))
  (test "gunit..." '(NIL NIL 10) (gunit '((1 () ((P a)))) '((2 () ((not P a)))) '((3 (x) ((P x)))) '(4 (x) ((P x)(Q x))) 10))
-(format t "I can't understand gunit~%")
+
+ (test "gunit from ex2.lisp" 
+   '(((25 NIL ((P A B C))) (26 NIL ((P A B C))) (27 NIL ((P A B C)))
+         (28 NIL ((P C E C))) (29 NIL ((P C E C))) (30 NIL ((P C B A))))
+        ((8 4 6 1) (9 4 6 2) (10 4 6 3) (11 1 10 2) (12 1 9 1) (13 1 9 2)
+         (14 2 10 1) (15 2 10 2) (16 2 8 1) (17 2 8 2) (18 3 10 1) (19 3 9 1)
+         (20 3 9 2) (21 3 8 1) (22 3 8 2) (23 4 10 1) (24 4 8 2) (25 1 14 1)
+         (26 1 13 1) (27 1 12 1) (28 2 24 1) (29 2 23 1) (30 2 21 1))
+        30)
+    (gunit '((1 (X) ((P E X X))) (2 (X) ((P X E X))) (3 (X) ((P X X E))) (4 NIL ((P A B C))))
+           ' ((5 NIL ((NOT P B A C)))) 
+           '((4 NIL ((P A B C))))
+           '(6 (X Y Z U V W) ((NOT P X Y U) (NOT P Y Z V) (NOT P X V W) (P U Z W))) 
+           7)
+ )
+(format t "~%I can't understand gunit~%")
 ) 
 
 (deftest test-pnsort () "for pnsort" 
@@ -82,22 +97,56 @@
 )
 
 (deftest test-fdepth () "for fdepth" )
+
 (deftest test-ftest () "for ftest" )
-(deftest test-subsume () "for subsume" )
+
+(deftest test-subsume () "two clause subsume? "
+  (test "subsume yes" T (subsume '(1 (X Y) ((P X (F Y)))) '(2 (U W) ((P U (F W))))))
+  (test "subsume yes ech var" T (subsume '(1 (X Y) ((P X (F Y)))) '(2 (U W) ((P W (F U))))))
+  (test "subsume yes xfx" T (subsume '(1 (X Y) ((P X (F Y)))) '(2 (U W) ((P W (F W))))))
+  (test "subsume yes cv" T (subsume '(1 (X Y) ((P X Y))) '(2 (U) ((P U A)))))
+  (test "subsume no " nil (subsume '(1 (X Y) ((P X (F Y)))) '(2 (W) ((P W (G W))))))
+  (test "subsume no " nil (subsume '(1 (X Y) ((P (G X) (F X)))) '(2 (U W) ((P W W)))))
+  (test "subsume no " nil (subsume '(1 (X Y) ((P (G X) (F Y)))) '(2 (U W) ((P (G W))))))
+)
+
 (deftest test-stest () "for stest" )
-(deftest test-contradict () "for contradict" )
-(deftest test-dtree () "for dtree" )
+
+(deftest test-contradict () "for contradict" 
+  (test "contradict nil nil" nil (contradict () ()))
+  (test "contradict nil one" nil (contradict () '((1 () ((P a)))))) 
+  (test "contradict one nil" nil (contradict '((1 () ((P a)))) ()))
+  (test "contradict 1 1" '(contradiction 1 2) (contradict '((1 () ((P a)))) '((2 () ((not P a))))))
+  (test "contradict 2 1" '(contradiction 3 2) (contradict '((1 () ((P a)))(3 () ((Q a)))) '((2 () ((not Q a)))(4 () ((not P b))))))
+  (test "contradict 2 2" '(contradiction 3 4) (contradict '((1 () ((P a)))(3 () ((Q a)))) '((2 () ((not P b)))(4 () ((not Q a))))))
+  (test "contradict no" '() (contradict '((1 () ((Q a)))(3()((P a)))) '((2 () ((not Q b)))(4 ()((not P b))))))
+)
+
+(deftest test-dtree () "for dtree" 
+;; infinite loop  (test "dtree immediate contradiction" '((CONTRADICTION 1 2)) (dtree '(CONTRADICTION 1 2) '() 1))
+  (test "dtree immediate contradiction weird" '((CONTRADICTION 1 2)) (dtree '(CONTRADICTION 1 2) '((2 1 1 1)) 2))
+
+  (test "dtree from ex1" '((6 3 4 4) (11 2 6 2) (15 1 11 1) (CONTRADICTION 1 15))
+         (dtree '(CONTRADICTION 1 15)
+                '((6 3 4 4) (7 1 6 1) (8 1 6 2) (9 1 6 3) (10 2 6 1) (11 2 6 2)
+                 (12 2 6 3) (13 1 12 1) (14 1 12 2) (15 1 11 1) (16 1 11 2)
+                 (17 1 10 2) (18 1 9 1) (19 1 9 2) (20 1 8 1) (21 1 8 2) (22 1 7 1)
+                 (23 1 7 2) (24 2 12 1) (25 2 10 2))
+                 5))
+)
+
 (deftest test-tpu () "for tpu" )
 
 (deftest test-all ()
  (test-set "tests for tpu"
+(format t "some tests called  wierd are what I cant see what is it~%")
   (test-rename)
   (test-inside)
   (test-disagree)
   (test-unification)
   (test-deletev)
   (test-uresolve)
-;  (test-gunit)
+  (test-gunit)
   (test-pnsort)
   (test-fdepth)
   (test-ftest)

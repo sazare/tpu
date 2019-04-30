@@ -312,6 +312,7 @@ B8 (setf w (cons x1 w))
 )
 
 (defun contradict (u v)
+;; u is a list of positive unit clause, v is a list of negative unit clauses
  (prog (x1 y res)
   (tagbody
 B1 (if (or (null u)(null v)) (return-from contradict nil))
@@ -329,6 +330,7 @@ B3 (setf u (cdr u))
 )
 
 (defun dtree (z hist n1)
+;; find a history from all proof steps
  (prog (x tx x1 h m1 m2 m n)
    (tagbody
     (setf hist (reverse hist))
@@ -338,7 +340,7 @@ B3 (setf u (cdr u))
     (setf x (reverse x))
 B0  (if (> (cadr x) n1)(go B1))
     (setf x (list (car x)))
-B1  (if (null x) (return-from dtree z))
+B1 (if (null x) (return-from dtree z))
     (setf x1 (car x))
 B2  (if (equal x1 (caar hist)) (go B3))
     (setf hist (cdr hist))

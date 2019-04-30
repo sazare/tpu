@@ -1,5 +1,4 @@
 ;; ex2.lisp
-
 (print 
 (tpu
   '((1 (X) ((P E X X)))
