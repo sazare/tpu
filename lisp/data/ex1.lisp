@@ -1,5 +1,5 @@
 ;;; example1
-
+(print 
 (tpu
   '((1 (X Y) ((P (G X Y) X Y)))
     (2 (X Y) ((P X (H X Y) Y))))
@@ -11,6 +11,7 @@
   2
   3
   0)
+)
 
 ;;; OUTPUT
 ;; ((6 3 4 4)(11 2 6 2)(15 1 11 1)(CONTRADICTION 1 15))
