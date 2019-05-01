@@ -283,6 +283,8 @@ B2 (setf u (unification c1 c2))
 )
 
 (defun stest (u res)
+;;; remove duplicate in res to single
+;;; remove one in u from res 
  (prog (r v w x1 y z)
   (tagbody
 B1 (if (null res) (go B5))

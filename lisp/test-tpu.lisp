@@ -43,7 +43,7 @@
 
  (test "unify twisted" '((x1 a)(y1 (h a))(y2 (g a))(x2 (k (h a)(g a)))) (unification '(P x1 (h x1) (g x1) x2) '(P a y1 y2 (k y1 y2))))
 
- (test "unify wierd" '((x1 a)(x2 (h (g a) (k a)))(y2 (g a))(y3 (k a))) (unification '(P x1 x2 (g x1) (k x1)) '(P a (h y2 y3) y2 y3)))
+ (test "WEIRD:unify" '((x1 a)(x2 (h (g a) (k a)))(y2 (g a))(y3 (k a))) (unification '(P x1 x2 (g x1) (k x1)) '(P a (h y2 y3) y2 y3)))
  (test "unify wierd" '((x1 a)(x2 (h y2 y3))(y2 (g a))(y3 (k a))) (unification '(P x1 x2 (g x1)(k x1)) '(P a (h y2 y3) y2 y3)))
 )
 
@@ -88,7 +88,7 @@
            '(6 (X Y Z U V W) ((NOT P X Y U) (NOT P Y Z V) (NOT P X V W) (P U Z W))) 
            7)
  )
-(format t "~%I can't understand gunit~%")
+;(format t "~%I can't understand gunit~%")
 ) 
 
 (deftest test-pnsort () "for pnsort" 
@@ -110,7 +110,16 @@
   (test "subsume no " nil (subsume '(1 (X Y) ((P (G X) (F Y)))) '(2 (U W) ((P (G W))))))
 )
 
-(deftest test-stest () "for stest" )
+(deftest test-stest () "for stest" 
+;; remain one of res, and remove one of u from res
+  (test "stest removes none in res"  '((61 nil ((not p b c a)))) (stest '() '((61 nil ((not p b c a))))))
+  (test "stest remains one in res"  '((61 nil ((not p b c a)))) (stest '() '((61 nil ((not p b c a)))(62 nil ((not p b c a))))))
+  (test "stest removes none keep res"  '((61 nil ((not p b c a)))) (stest '((5 nil ((not p b a c)))) '((61 nil ((not p b c a))))))
+  (test "stest removes all in u from res"  '() (stest '((5 nil ((not p b a c)))) '((61 nil ((not p b a c))))))
+  (test "stest remains one in res u=()"  '((61 nil ((not p b c a)))(63 nil ((p b a c)))) (stest '() '((61 nil ((not p b c a)))(63 nil ((p b a c)))(64 nil ((not p b c a))))))
+  (test "WEIRD: stest removes one u and res. why all removed?"  '() (stest '((5 nil ((not p b c a)))) '((61 nil ((not p b c a)))(67 nil ((not p b c a))))))
+
+)
 
 (deftest test-contradict () "for contradict" 
   (test "contradict nil nil" nil (contradict () ()))
@@ -123,8 +132,12 @@
 )
 
 (deftest test-dtree () "for dtree" 
-;; infinite loop  (test "dtree immediate contradiction" '((CONTRADICTION 1 2)) (dtree '(CONTRADICTION 1 2) '() 1))
-  (test "dtree immediate contradiction weird" '((CONTRADICTION 1 2)) (dtree '(CONTRADICTION 1 2) '((2 1 1 1)) 2))
+;; loop infinite 
+;(format t "dtree immediate contradiction causes infinite looop~%")
+;(test "dtree immediate contradiction" '((CONTRADICTION 1 2)) (dtree '(CONTRADICTION 1 2) '() 2))
+;; dtree seems to assume hist != ().
+
+  (test "WEIRD:dtree immediate contradiction" '((CONTRADICTION 1 2)) (dtree '(CONTRADICTION 1 2) '((2 1 1 1)) 2))
 
   (test "dtree from ex1" '((6 3 4 4) (11 2 6 2) (15 1 11 1) (CONTRADICTION 1 15))
          (dtree '(CONTRADICTION 1 15)
@@ -135,11 +148,22 @@
                  5))
 )
 
-(deftest test-tpu () "for tpu" )
+(deftest test-tpu () "for tpu" 
+ (format t "data/ex[1-9].lisp tests tpu, based on the Book~%")
+ (load "test-ex1.lisp")
+ (load "test-ex2.lisp")
+ (load "test-ex3.lisp")
+ (load "test-ex4.lisp")
+ (load "test-ex5.lisp")
+ (load "test-ex6.lisp")
+ (load "test-ex7.lisp")
+ (load "test-ex8.lisp")
+ (load "test-ex9.lisp")
+)
 
 (deftest test-all ()
  (test-set "tests for tpu"
-(format t "some tests called  wierd are what I cant see what is it~%")
+(format t "Some tests prefixed WIERD are what I don't understand what it is~%")
   (test-rename)
   (test-inside)
   (test-disagree)
