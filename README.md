@@ -1,7 +1,7 @@
 # tpu
 A commonlisp translation from original TPU.
 
-TPU is a program written in Symbolic Logic and Mechanical Theorem Proving by Chn-Liang Chang and Richard Char-Tung Lee.
+TPU is a program written in "Symbolic Logic and Mechanical Theorem Proving" by Chin-Liang Chang and Richard Char-Tung Lee.
 
 no Julia version at 2021/03/21.
 
@@ -20,5 +20,5 @@ I rewrote them as..
 3) Commonlisp constructs for control flows.
 
 
-* Whether the translation is correct was checked by comparing the result of examples whth the book's results, 
+* Whether the translation is correct was checked by comparing the result of examples with the book's results, 
 
